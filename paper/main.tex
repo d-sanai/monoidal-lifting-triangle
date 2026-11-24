@@ -1,0 +1,366 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\ifx\directlua\undefined
+  \ifx\XeTeXversion\undefined
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage{lmodern}
+  \else
+    \usepackage{fontspec}
+  \fi
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[english]{babel}
+\babelprovide[import, onchar=ids fonts]{english}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\definecolor{accent}{RGB}{24, 68, 118}
+\usepackage[colorlinks=true, linkcolor=accent, citecolor=accent, urlcolor=accent]{hyperref}
+
+\title{\textbf{Monoidal Lifting Triangles: Exact Bit-Lossless Neural-Symbolic Computing and Topological Self-Introspection in a 64-Byte Cell}}
+
+\author{The Monoidal Lifting Triangle Team}
+
+\date{November 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Modern artificial intelligence remains divided between continuous neural networks, which suffer from floating-point drift and catastrophic forgetting, and discrete symbolic solvers, which face combinatorial search explosion. In this paper, we demonstrate that enforcing a single uncompromising constraint---\textbf{exact 0-bit lossless conservation}---causes these two paradigms to collapse into a single uniform computing primitive: the \textbf{Monoidal Lifting Triangle (MLT)}, implemented as a cache-aligned 64-byte C99 structure with zero heap allocation and no floating-point math library dependencies.
+
+By establishing an exact integer dual-chart isomorphism between orthogonal modular arithmetic ($\mathbb{Z}/2^{16}\mathbb{Z}$) and Log-Polar Fourier Holographic Reduced Representations (FHRR) via 7.5~KB of L1-resident lookup tables, our primitive naturally reproduces the Frobenius axioms of the ZX-calculus (Z-spider, X-spider, and Hadamard chart transitions) without prior theoretical imposition. We show that: (1) 64-layer bidirectional lifting ladders achieve exact 0-bit state reconstruction ($\mu^{64} \circ \Delta^{64} = \mathrm{id}$) at 2.54--2.75~G cells/s on ARM64 NEON; (2) dynamic currying crystallizes Boolean and arithmetic circuits directly into algebraic normal form (ANF), enabling backtrack-free $O(N)$ causal abduction over $2^{127}$-state spaces (64-bit adders in 127 steps) and accelerating 1-UIP conflict-driven clause learning; (3) local 2-morphism holonomy updates train 256-dimensional, 64-layer networks with $O(1)$ activation memory and deterministic multi-thread equivalence (\texttt{1T == 10T}); and (4) extending the 2-simplex ($\Delta^2$) to 3D tetrahedral meshes ($\Delta^3$) unifies forward deduction, abduction, and parameter learning into a single inner horn-filling operation ($\Lambda^2_k \to \Delta^2$), while enabling blind topological self-introspection via $H^2$ monopole detection and Pachner moves---yielding a self-organizing circuit topology that serves directly as its own verifiable bidirectional Abstract Syntax Tree (AST).
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{The Precision--Abstraction Dilemma in Neural-Symbolic Systems}
+Contemporary machine intelligence is split across two incompatible computational foundations. Continuous deep learning architectures excel at perceptual representation and gradient-based adaptation over high-dimensional spaces, yet they rely on non-associative floating-point arithmetic (FP32, FP16, and BF16). Across deep compositions or iterative state transitions, mantissa truncation and rounding noise accumulate irreversibly, destroying exact state reversibility, masking subtle topological invariants, and forcing systems to rely on brittle post-hoc explanations. Conversely, discrete symbolic solvers and formal proof assistants guarantee logical soundness, but they operate over rigid combinatorial search spaces that suffer from exponential branching ($O(2^N)$) and struggle to integrate continuous sensory signals.
+
+Most existing neuro-symbolic architectures attempt to bridge this divide externally by coupling an approximate neural front-end to a separate symbolic reasoning engine. Such hybrid pipelines treat continuous signal processing, logical deduction, learning, and self-explanation as distinct software layers glued together by ad-hoc interfaces. As a result, internal neural activations cannot be inverted without information loss, and symbolic justifications remain decoupled from the underlying physical state transitions.
+
+\subsection{Independent Convergence on Minimal Computational Primitives}
+In this work, we take the opposite approach: rather than combining existing continuous and discrete engines, we ask what computational architecture emerges when a single uniform circuit primitive is subjected to \textbf{strict 0-bit lossless conservation}. Specifically, we require that every elementary state transformation be exactly invertible over finite modular integer rings, with zero floating-point arithmetic, zero dynamic heap allocation, and zero information dissipation across arbitrary circuit depths.
+
+Remarkably, pursuing this purely engineering and algebraic constraint leads---without prior theoretical imposition---to an independent convergence with the fundamental building blocks of categorical quantum mechanics and higher-dimensional simplicial homotopy theory:
+\begin{enumerate}
+    \item \textbf{Emergent ZX-Calculus Frobenius Algebras:} Representing states simultaneously in orthogonal modular coordinates ($\mathbb{Z}/2^{16}\mathbb{Z}$) and Log-Polar Fourier Holographic Reduced Representations (FHRR) turns linear superposition and multiplicative phase binding into complementary Frobenius spiders (X-spider and Z-spider), linked by a fast L1-resident dual-chart Hadamard transition ($H$).
+    \item \textbf{Dagger Compact Closed Reversibility:} Embedding dual-chart transformations inside bipartite and tripartite Feistel lifting ladders guarantees that every forward inference pass $\Delta$ admits an exact two's-complement inverse $\mu$ satisfying $\mu \circ \Delta = \mathrm{id}$ with 0-bit error, even when intermediate chart projections involve quantization rounding.
+    \item \textbf{Simplicial Horn Filling and Self-Explaining Topology:} Organizing three complementary operations (Z, X, and H) on the vertices of a 2-simplex ($\Delta^2$) unifies forward deduction, causal abduction, and parameter learning into a single inner horn-filling operation ($\Lambda^2_k \hookrightarrow \Delta^2$). Extending this primitive to 3D tetrahedral meshes ($\Delta^3$) allows the circuit to detect topological obstructions ($H^1$ vortices and $H^2$ monopoles) and repair its own wiring via Pachner moves. Because every connection satisfies strict conservation, the self-organized circuit topology serves directly as a verifiable bidirectional Abstract Syntax Tree (AST).
+\end{enumerate}
+
+\subsection{Summary of Contributions}
+All experiments in this paper are built upon a single cache-aligned 64-byte C99 primitive (\texttt{lifting\_core\_v2.h}) compiled with \texttt{-std=c99 -O3} without \texttt{-lm} or dynamic memory allocation. Our primary contributions are organized across four architectural layers:
+\begin{itemize}
+    \item \textbf{Pure-Integer Dual Charts and 64-Layer 0-Bit Reversibility (Section~\ref{sec:formulation}):} We formulate an exact integer isomorphism between $(\mathbb{Z}/2^{16}\mathbb{Z})^2$ and Log-Polar FHRR coordinates using 7.5~KB of L1D-resident lookup tables, proving exact ZX-calculus Frobenius identities on $\{0, \texttt{0x8000}\}$, 0-bit arbitrary-angle 3-shear rotations, and 0-bit state reconstruction across 64-layer lifting ladders at 2.54--2.75~G cells/s on ARM64 NEON.
+    \item \textbf{Curried Logic Synthesis and $O(N)$ Causal Abduction (Section~\ref{sec:abduction}):} Exploiting the algebraic duality of phase \texttt{0x8000} (simultaneously $\mathbb{F}_2$ logical truth and continuous antipodal inversion), we demonstrate dynamic currying into algebraic normal form (ANF) without lookup tables, backtrack-free $O(N)$ abduction of 127 unknowns in 127 steps across a $2^{127}$ state space, and 1-UIP conflict-driven clause learning (CDCL) acceleration.
+    \item \textbf{Backprop-Free $O(1)$-Memory Local Learning and Persistent Metabolism (Section~\ref{sec:metabolism}):} We introduce local 2-morphism holonomy updates that train 256-dimensional, 64-layer networks (16,384 weights) with $O(1)$ activation memory, deterministic thread invariance (\texttt{1T == 10T}), context-free autonomous routing, and hysteresis slot recycling with zero catastrophic forgetting.
+    \item \textbf{Higher Simplices ($\Delta^2 / \Delta^3$) and Topological Self-Introspection (Section~\ref{sec:simplicial}):} We extend the 2-simplex triality cell to 3D tetrahedral meshes ($S^3$), demonstrating blind gauge-breaking structural identification ($U(1) \to C_4 \to \{e\}$) and autonomous 1-4 / 4-1 / 2-3 / 3-2 Pachner self-repair.
+\end{itemize}
+
+\section{Mathematical Formulation: The Monoidal Lifting Triangle}
+\label{sec:formulation}
+
+\subsection{Exact Integer Dual Charts}
+To unify continuous wave-like interference and discrete symbolic binding within a single deterministic register width, each signal channel is represented across two isomorphic integer coordinate charts:
+\begin{enumerate}
+    \item \textbf{Orthogonal Cartesian Chart ($\mathcal{C}_{\mathrm{cart}}$):} Pairs of signed 16-bit two's-complement integers $(re, im) \in (\mathbb{Z}/2^{16}\mathbb{Z})^2$, representing complex amplitudes in a discrete Gaussian-like modular ring. Component-wise addition ($re_1 \oplus re_2,\, im_1 \oplus im_2 \pmod{2^{16}}$) is strictly associative, commutative, and invertible via two's-complement negation ($\ominus$).
+    \item \textbf{Log-Polar FHRR Chart ($\mathcal{C}_{\mathrm{log}}$):} Pairs $(\rho, \theta)$, where $\rho \in \mathbb{Z}$ is a signed fixed-point $Q7.8$ logarithmic magnitude ($\rho = \lfloor 256 \log_2 r \rceil$, spanning $-14$ to $+1.5$ octaves) and $\theta \in \mathbb{Z}/2^{16}\mathbb{Z}$ is a cyclic phase angle ($2\pi \leftrightarrow 2^{16}$, giving an angular resolution of $360^\circ / 65536 \approx 0.00549^\circ$). The Cartesian origin $(0, 0)$ is mapped to an explicit absorbing bottom element $\bot$ (\texttt{LC\_LOG\_ZERO} $= -32768$), while maximum amplitude saturates at $\rho_{\max} = +32767$.
+\end{enumerate}
+
+In the Log-Polar chart, holographic binding ($\circledast$) between two non-bottom signals $(\rho_1, \theta_1)$ and $(\rho_2, \theta_2)$ reduces to exact integer addition:
+\begin{equation}
+    (\rho_1, \theta_1) \circledast (\rho_2, \theta_2) = \bigl(\mathrm{sat}_{16}(\rho_1 + \rho_2),\; (\theta_1 + \theta_2) \bmod 2^{16}\bigr),
+\end{equation}
+with $\bot \circledast x = x \circledast \bot = \bot$. Unbinding ($\oslash$) is performed by subtracting $\rho_2$ and adding the modular phase inverse $(-\theta_2) \bmod 2^{16}$.
+
+To eliminate floating-point transcendental functions (\texttt{atan2}, \texttt{log2}, \texttt{sin}, \texttt{cos}) and guarantee bit-identical execution across scalar C99 and ARM64 NEON SIMD hardware, bidirectional chart transitions are implemented using \textbf{7.5~KB of L1D-resident lookup tables (LUTs)}:
+\begin{itemize}
+    \item \textbf{Forward Map $\Phi_{\mathrm{C}\to\mathrm{L}}: \mathcal{C}_{\mathrm{cart}} \to \mathcal{C}_{\mathrm{log}}$ (\texttt{cart\_to\_log}):} For any non-zero $(re, im) \in [-32768, 32767]^2$, the squared norm $r^2 = |re|^2 + |im|^2 \le 2^{31}$ fits in an unsigned 32-bit integer without overflow. Extracting the leading bit index $k = 31 - \mathrm{clz}(r^2)$ (via \texttt{vclzq\_u32} on NEON) yields the integer octave, while the normalized top 9 bits index a 1~KB \texttt{half\_log2} table to obtain $\rho = 128(k - 28) + \mathrm{LUT}_{\log}[\mathrm{idx}]$ within $\le 1\text{ LSB}$ across the entire dynamic range. Simultaneously, 8-octant folding maps $\min(|re|,|im|)/\max(|re|,|im|) \in [0, 1]$ into a 2~KB \texttt{atan} table, and branchless bitwise selection (\texttt{vbslq\_u16}) resolves octants, axis boundaries, $(-32768, -32768)$, and $(0,0) \mapsto \bot$ with 0-bit scalar--SIMD parity.
+    \item \textbf{Inverse Map $\Phi_{\mathrm{L}\to\mathrm{C}}: \mathcal{C}_{\mathrm{log}} \to \mathcal{C}_{\mathrm{cart}}$ (\texttt{log\_to\_cart}):} Reconstructs $(re, im)$ from $(\rho, \theta)$ via quarter-wave trigonometric tables and octave bit-shifts (4.5~KB combined). Across all non-saturated states, the round-trip chart conversion $\Phi_{\mathrm{L}\to\mathrm{C}} \circ \Phi_{\mathrm{C}\to\mathrm{L}}$ exhibits a maximum error of $\le 1\text{ LSB}$ in magnitude and $\le 0.220^\circ$ in phase.
+\end{itemize}
+
+\subsection{Emergent ZX-Calculus Frobenius Algebras and 3-Shear Rotations}
+When the dual charts are coupled through elementary wiring primitives, three canonical operations emerge:
+\begin{itemize}
+    \item \textbf{Z-Spider ($\mathcal{C}_{\mathrm{log}}$ basis):} Signal fan-out (copy $\delta_Z: x \mapsto x \otimes x$) and multiplicative phase binding (Z-fusion $\alpha \circledast \beta$).
+    \item \textbf{X-Spider ($\mathcal{C}_{\mathrm{cart}}$ basis):} Modular linear superposition (bundling $\beta_1 \oplus \beta_2 \pmod{2^{16}}$) and parity projection (X-fusion).
+    \item \textbf{Hadamard Transition ($H$):} The dual-chart isomorphism $\Phi_{\mathrm{C}\to\mathrm{L}} \leftrightarrow \Phi_{\mathrm{L}\to\mathrm{C}}$, which intertwines multiplicative phase binding in $\mathcal{C}_{\mathrm{log}}$ with additive superposition in $\mathcal{C}_{\mathrm{cart}}$.
+\end{itemize}
+Restricted to the $\mathbb{Z}_2$ antipodal phase subgroup $\{0, \texttt{0x8000}\} \subset \mathbb{Z}/2^{16}\mathbb{Z}$ (representing $\{+1, -1\}$), these three operators satisfy the Frobenius fusion laws, the $K_{2,2}$ bialgebra law, and the Hopf law---wherein two parallel edges carrying phase \texttt{0x8000} cancel identically via $\texttt{0x8000} + \texttt{0x8000} \equiv 0 \pmod{2^{16}}$---with strict 0-bit precision.
+
+Furthermore, to perform arbitrary-angle phase rotations $R(\theta)$ for any $\theta \in [0, 2\pi)$ (including non-dyadic angles such as $105^\circ = \texttt{0x4AAA}$) without incurring round-trip LUT rounding, we decompose $\pi$-inversions into exact two's-complement negation and residual angles $\phi \in [-\pi/2, +\pi/2]$ into a 3-shear integer lifting cascade in $Q1.14$ fixed-point ($\alpha = \tan(\phi/2)$, $\beta = \sin\phi$):
+\begin{align*}
+    re_1 &= re \ominus \lfloor \alpha \cdot im \rceil, &
+    im_1 &= im \oplus \lfloor \beta \cdot re_1 \rceil, &
+    re_2 &= re_1 \ominus \lfloor \alpha \cdot im_1 \rceil \pmod{2^{16}}.
+\end{align*}
+Because each shear step modifies only one coordinate as a deterministic function of the other, reversing the sequence in opposite order yields $R_{\text{3-shear}}^{-1}(\theta) \circ R_{\text{3-shear}}(\theta) = \mathrm{id}$ with 0-bit exactness for every angle in $\mathbb{Z}/2^{16}\mathbb{Z}$.
+
+\subsection{64-Byte Hardware Cell and 64-Layer Exact Reversibility}
+Each computational unit is instantiated as a 64-byte structure (\texttt{LiftingCell} / \texttt{LiftingCellLog}) aligned to a single L1 cache line with zero padding. A cell holds three local connectivity references (\texttt{in\_s}, \texttt{in\_g}, \texttt{in\_v}) supporting vertical sequential composition ($\circ$) and horizontal monoidal tensor coupling ($\otimes$), alongside its dual-chart state registers and curried bond parameters.
+
+Crucially, although a single standalone call to $\Phi_{\mathrm{L}\to\mathrm{C}} \circ \Phi_{\mathrm{C}\to\mathrm{L}}$ permits up to $1\text{ LSB}$ of quantization rounding, embedding the dual-chart FHRR predictor inside a \textbf{bipartite lifting ladder} eliminates cumulative drift entirely. Given state streams $(s^{(l)}, v^{(l)}) \in (\mathbb{Z}/2^{16}\mathbb{Z})^2$ at layer $l$, the forward transition $\Delta_l$ and inverse transition $\mu_l$ are defined as:
+\begin{align}
+    \Delta_l &: \quad v^{(l+1)} = v^{(l)} \oplus \mathcal{P}_{\mathrm{dual}}\bigl(s^{(l)}; w_l\bigr), \qquad
+               s^{(l+1)} = s^{(l)} \oplus \mathcal{Q}_{\mathrm{dual}}\bigl(v^{(l+1)}; w'_l\bigr), \\
+    \mu_l &: \quad s^{(l)} = s^{(l+1)} \ominus \mathcal{Q}_{\mathrm{dual}}\bigl(v^{(l+1)}; w'_l\bigr), \qquad
+             v^{(l)} = v^{(l+1)} \ominus \mathcal{P}_{\mathrm{dual}}\bigl(s^{(l)}; w_l\bigr),
+\end{align}
+where $\mathcal{P}_{\mathrm{dual}}$ and $\mathcal{Q}_{\mathrm{dual}}$ evaluate FHRR phase binding in $\mathcal{C}_{\mathrm{log}}$ and project back to $\mathcal{C}_{\mathrm{cart}}$. Because $\mathcal{P}_{\mathrm{dual}}$ and $\mathcal{Q}_{\mathrm{dual}}$ are deterministic integer maps, any quantization rounding produced during $\Delta_l$ is reproduced bit-for-bit during $\mu_l$ and cancelled identically by modular subtraction ($\ominus$).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Comparison of Arithmetic Precision Formats and Dual-Chart Lifting Performance (64-Layer Closed Loop $\mu^{64} \circ \Delta^{64}$ on Apple Silicon ARM64).}
+\label{tab:dual_chart_bench}
+\begin{tabularx}{\textwidth}{@{}Xcccc@{}}
+\toprule
+\textbf{Representation / Backend} & \textbf{Footprint} & \textbf{64-Layer Round-Trip} & \textbf{Associativity} & \textbf{Throughput} \\
+\midrule
+FP32 IEEE-754 (Reference) & 128 B & $\sim 10^{-5}$ (drift) & Approximate & --- \\
+BF16 / FP16 Half-Precision & 64 B & Severe state collapse & Non-associative & --- \\
+\textbf{MLT Scalar C99 ($\mathbb{Z}/2^{16}\mathbb{Z}$)} & \textbf{64 B} & \textbf{0-bit exact} & \textbf{Strict ring} & 0.42 G cells/s \\
+\textbf{MLT ARM64 NEON SIMD} & \textbf{64 B} & \textbf{0-bit (0-bit parity)} & \textbf{Strict ring} & \textbf{2.54--2.75 G cells/s} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+As summarized in Table~\ref{tab:dual_chart_bench}, a 64-layer bidirectional lifting ladder ($\mu^{64} \circ \Delta^{64} = \mathrm{id}$) achieves strictly 0-bit reconstruction error across all tested signal regimes while sustaining 2.54--2.75~G cells/s on ARM64 NEON with 0-bit parity against the scalar C99 reference.
+
+\section{Curried Circuit Synthesis and $O(N)$ Causal Abduction}
+\label{sec:abduction}
+
+\subsection{Dynamic Currying via the \texttt{0x8000} Duality and ANF Crystallization}
+A central obstacle in neuro-symbolic computing is the mismatch between continuous weight updates and discrete Boolean truth tables. In our integer dual-chart formulation, this divide disappears due to the algebraic duality of the modular element $\texttt{0x8000}$ ($-32768$) in $\mathbb{Z}/2^{16}\mathbb{Z}$. On the one hand, $\texttt{0x8000}$ is the unique element of additive order two:
+\begin{equation}
+    \texttt{0x8000} \oplus \texttt{0x8000} \equiv 0 \pmod{2^{16}},
+\end{equation}
+making the subgroup $\{0, \texttt{0x8000}\}$ isomorphic to the Galois field $(\mathbb{F}_2, \oplus)$ under modular addition. On the other hand, in signed $Q1.14$ coordinates, $(0, -32768)$ represents the antipodal extremum along the imaginary axis, so continuous variational updates converge smoothly onto discrete Boolean extrema without rounding drift.
+
+Eliminating all external bias lookup tables in favor of pure rotators $w$ and curried multiplicative bonds ($s_{\mathrm{eff}} = g \cdot s$ across cell ports \texttt{in\_s} and \texttt{in\_g}) causes arbitrary Boolean gates to crystallize directly into their exact \textbf{Algebraic Normal Form (ANF / Zhegalkin polynomials)} using only binary coefficients $\{(0,0), (0,-32768)\}$ with 0-bit $L^2$ residual:
+\begin{itemize}
+    \item \textbf{Elementary Reversible Gates:} Presented solely with input--output boundary truth tables, a curried cell converges with 0-bit residual to CNOT ($w_0 = (0,-32768)$), XOR ($w_0 = w_1 = (0,-32768)$), OR ($w_0 = w_1 = w_2 = (0,-32768)$), and Toffoli AND ($w_2 = (0,-32768)$).
+    \item \textbf{Adiabatic Topological Mitosis:} Rather than pre-allocating an exponential number of higher-order product terms ($2^k - 1$), the network begins solely with $k$ primary input cells and evolves under two separated timescales: fast rotator relaxation on orthogonal variable masks (\texttt{var\_mask}) and slow structural mitosis. Only when all existing cells reach local equilibrium yet an uncovered input combination still produces a non-zero top-level residual ($r_{\mathrm{top}} \neq 0$) does the network spawn a single new 64-byte curried cell joining the disjoint variable pair $(u, v)$ ($\texttt{u.var\_mask} \mathbin{\&} \texttt{v.var\_mask} = 0$, enforcing $\mathbb{F}_2$ idempotency $x^2 = x$) with maximum residual correlation.
+\end{itemize}
+
+On a 3-input full adder ($A, B, C_{\mathrm{in}}$), this dynamic mitosis synthesizes the sum output $S = A \oplus B \oplus C_{\mathrm{in}}$ using \textbf{0 spawned cells} (the 3 initial linear cells suffice), the carry output $C_{\mathrm{out}} = AB \oplus BC_{\mathrm{in}} \oplus C_{\mathrm{in}}A$ using \textbf{3 spawned second-order cells} ($AB$, $AC_{\mathrm{in}}$, $BC_{\mathrm{in}}$, without generating a redundant third-order term $ABC_{\mathrm{in}}$), and the 3-input Toffoli product $A \cdot B \cdot C_{\mathrm{in}}$ using the theoretical minimum of \textbf{2 recursively curried cells} ($A \cdot B \to (A \cdot B) \cdot C_{\mathrm{in}}$, where $A \cdot B$ acts as a zero-weight structural carrier). Under Modus Ponens boundary constraints ($P, P \to Q \vdash Q$), the same 64-byte cell executes forward deduction, Modus Tollens contraposition, counterexample refutation, and hypothesis abduction symmetrically, while contradictory inputs yield a persistent non-zero variational energy ($E = 18724$) that halts spurious mitosis.
+
+\subsection{Backtrack-Free Causal Wavefront Propagation ($O(N)$ Abduction)}
+Because every curried LiftingCell implements a strictly invertible modular relation $r = v \ominus \mathcal{Q}(w \cdot s_{\mathrm{eff}})$, unknown premises can be inferred from observed outputs without exhaustive search or random restarts. To prevent circular phase aliasing during multi-stage inversion, each variable separates its phase state $u$ from an integer \textbf{causal confidence score} (\texttt{conf}), initialized to $\texttt{conf} = 16384$ on observed boundary terminals and $\texttt{conf} = 0$ on unknowns.
+
+Whenever three of the four terminals of a cell hold positive confidence with minimum $m_k > 0$, the remaining terminal $k$ is evaluated via an $O(1)$ discrete local derivative $(E_0, E_1)$ across candidate values $\{0, 1\}$. If exactly one assignment achieves 0-bit cell residual, the variable is locked without modular wrap-around ambiguity and propagates a causal wavefront $\texttt{conf} = m_k - 64$ to adjacent stages. For tightly coupled multi-variable cores where $\texttt{conf} = 0$ simultaneously across multiple inputs, the solver applies complex-conjugate dual phase relaxation ($\Delta s_{\mathrm{eff}} \propto \bar{w} \cdot r_{\mathrm{top}}$) with antipodal \texttt{0x8000} tie-breaking and local residual memory weights (\texttt{mem\_w}) that push through false continuous minima until global 0-bit equilibrium is reached.
+
+Applied to a self-synthesized \textbf{64-bit reversible subtractor/adder} comprising \textbf{127 unknown variables} across a search space of $2^{127} \approx 1.7 \times 10^{38}$ states, causal wavefront propagation resolves all 127 unknowns deterministically in \textbf{127 steps} ($O(N)$, zero backtracking, zero randomness), reconstructing the exact 64-bit input boundary with 0-bit error.
+
+\subsection{Topological Degree Separation (\texttt{bond\_deg}) and 1-UIP Curried CDCL}
+For non-linear constraint satisfaction problems containing global cyclic dependencies---such as integer semiprime factorization or $9 \times 9$ Sudoku---hypothesis branching is occasionally unavoidable. When a speculative branch induces a local non-zero cell residual, the resulting conflict triggers \textbf{conflict-driven mitosis}: the conflicting assignment is crystallized into a prohibited curried product cell within a fixed-capacity pool and subsequently reclaimed via hysteresis counters (\texttt{idle\_counter} and \texttt{ref\_count}) once inactive.
+
+To avoid combinatorial thrashing on deep arithmetic circuits without hardcoding domain heuristics, we exploit the intrinsic \textbf{curried bond degree} (\texttt{bond\_deg}) of the self-synthesized topology. In an $N$-bit curried multiplier, primary input bits participate in $N$ distinct Toffoli-AND cells and therefore naturally exhibit maximal \texttt{bond\_deg}, distinguishing them cleanly from internal carry wires. Restricting branching decisions to the high-\texttt{bond\_deg} frontier ordered by variable activity, paired with First Unique Implication Point (1-UIP) clause learning over intermediate variables and short-clause retention ($\texttt{MAX\_CONFLICT\_LITS} = 6$), eliminates small-prime search blowup, reduces conflict counts by 50\%--90\% on 10-bit semiprime factorization, and solves hardest-class $9 \times 9$ Sudoku instances (Inkala 2012) with zero heap allocation.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Summary of Dynamic Currying Synthesis and $O(N)$ Causal Abduction Benchmarks (Zero Heap, Zero Randomness).}
+\label{tab:abduction_bench}
+\begin{tabularx}{\textwidth}{@{}Xcccc@{}}
+\toprule
+\textbf{Task / Circuit} & \textbf{State Space} & \textbf{Spawned Cells} & \textbf{Resolution Cost} & \textbf{Residual} \\
+\midrule
+Elementary Gates (CNOT/XOR/OR/Toffoli) & $2^2$--$2^3$ & ANF minimal & Single-pass relaxation & 0-bit \\
+3-Bit Full Adder ($S$, $C_{\mathrm{out}}$, Toffoli3) & $2^3$ & $0,\; 3,\; 2$ cells & Adiabatic mitosis & 0-bit \\
+16-Bit Reversible Adder (Hybrid Core) & $2^{31}$ & Auto-synthesized & Backtrack-free ($O(N)$) & 0-bit \\
+\textbf{64-Bit Reversible Adder / Subtractor} & $\mathbf{2^{127}}$ & Auto-synthesized & \textbf{127 steps (127 vars)} & \textbf{0-bit} \\
+10-Bit Semiprime Factorization & $2^{10}$ & Curried mult. & 1-UIP + \texttt{bond\_deg} ($-50\%$--$90\%$) & 0-bit \\
+$9 \times 9$ Sudoku (Inkala Hardest) & $9^{81}$ & Constraint DAG & Zero-heap 1-UIP CDCL & 0-bit \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Backprop-Free $O(1)$-Memory Local Learning and Persistent Metabolism}
+\label{sec:metabolism}
+
+\subsection{Dual-Stream Reversal with $O(1)$ Activation Memory}
+Standard reverse-mode automatic differentiation requires storing intermediate activations across all $L$ layers ($O(L)$ memory) and differentiating every transfer function via transposed Jacobians---an impossibility when layers pass through non-differentiable integer lookup tables (\texttt{cart\_to\_log} and \texttt{log\_to\_cart}). Because our 64-layer dual-chart lifting ladder is strictly 0-bit invertible ($\mu^{64} \circ \Delta^{64} = \mathrm{id}$), we eliminate activation storage entirely:
+\begin{enumerate}
+    \item \textbf{Forward Pass ($\Delta^{64}$):} Input pairs $(s_0, v_0)$ are propagated forward to produce output states $(s_{64}^{\uparrow}, v_{64}^{\uparrow})$, while \textbf{all 64 intermediate layer states are discarded}.
+    \item \textbf{Lockstep Dual-Stream Reversal ($\mu_{63} \to \dots \to \mu_0$):} Only two boundary state pairs---the forward output $(s_{64}^{\uparrow}, v_{64}^{\uparrow})$ and the target $(s_{64}^*, v_{64}^*)$---are stepped backward simultaneously through each layer $l$ using the pre-update weights. Because $\mu_l$ is exact, the upward stream reconstructs the exact input $s_l^{\uparrow}$ with 0-bit error (an operation that collapses catastrophically under BF16/FP16 rounding drift), while the downward stream transports an exact pre-image target $s_{l+1}^{\downarrow}$ without Jacobians.
+\end{enumerate}
+
+\subsection{Local 2-Morphism Holonomy Updates and Wirtinger Harmonic Bases}
+At each layer interface $l$, the boundary mismatch $d_l = s_{l+1}^{\uparrow} - s_{l+1}^{\downarrow}$ and reconstructed input feature $u_l$ define a local 2-morphism curvature signal via X-spider complex correlation $d_l \cdot \overline{u_l}$ (computing the Log-Polar phase residual $\theta_d - \theta_u$). To prevent small parameter increments from stalling beneath LUT quantization granularity (weight swamping), quantization remainders from \texttt{cart\_to\_log} are accumulated inside the 64-byte \texttt{LiftingCellLog} fields \texttt{adj\_rho} and \texttt{adj\_theta} as first-order $\Sigma\Delta$ error feedback.
+
+Because a lifting layer $s_{l+1} = v_l \ominus (P_l(s_l) \oplus b_l)$ remains 0-bit invertible for any deterministic predictor $P_l$, cycling four Log-Polar harmonic feature modes across depth $l \bmod 4$---namely $(\rho, \theta)$, $(\rho/2, +2\theta)$ (FHRR self-binding), $(\rho/2, -2\theta)$ (conjugate self-binding), and $(\rho, 0)$ (Weber--Fechner radial envelope)---yields a Wirtinger-complete nonlinear basis while preserving exact 64-layer reversibility.
+
+Across four validation suites (\texttt{bench\_local\_2morph\_learning.c}):
+\begin{itemize}
+    \item \textbf{Deep Hidden Layer Surgical Identification (Layer 17 of 64):} With 47 layers separating Layer 17 from the output, $O(1)$-memory local 2-morphism updates recover antipodal $\pi$ ($\texttt{0x8000}$) phase inversions, quarter-turn plus attenuation ($-1\text{ oct}, \texttt{0x4000}$), and complete weight erasure ($w_{17} = \bot$) within $\le 3\text{ LSB}$ magnitude and $< 0.35^\circ$ phase error.
+    \item \textbf{Simultaneous 64-Layer Teacher--Student Convergence:} Starting from zero-initialized weights ($w_l = \bot$ across all 64 layers), 80 epochs of local 2-morphism training reduce test RMSE by $> 95\%$ while preserving 0-bit 64-layer inverse reconstruction.
+    \item \textbf{Nonlinear 64-Layer Classification:} On both 4-quadrant complex XOR and concentric-ring benchmarks (256 unseen test points), the 64-layer harmonic ladder achieves $\ge 98.0\%$ test accuracy with 0-bit round-trip reversibility.
+    \item \textbf{High-Dimensional Deterministic Scaling:} Scaled to 256 dimensions $\times$ 64 layers (16,384 weights), the $O(1)$-memory update executes with bit-identical convergence across single-threaded and 10-threaded execution (\texttt{1T == 10T}).
+\end{itemize}
+
+\subsection{Context-Free Autonomous Routing, OOD Growth, and Perpetual Metabolism}
+To operate continually without external task labels (\texttt{ctx\_id}) or catastrophic forgetting, multiple 64-layer/48-layer lifting fibers are organized into a \textbf{fixed-capacity physical memory pool} governed by topological phase-coherence signals:
+\begin{enumerate}
+    \item \textbf{Context-Free Routing:} Incoming samples are evaluated across active sections and routed autonomously to the fiber minimizing second-order phase alignment residual $E_2$, achieving $100.00\%$ routing accuracy without task identifiers.
+    \item \textbf{Unsupervised OOD Discovery and 1-Bit Polarity Grounding:} When $\min_k E_2$ exceeds an equal-error-rate threshold ($\tau_{\mathrm{ood}} = 0.32$), the sample is flagged as out-of-distribution ($H^1$ phase obstruction). Buffered OOD samples undergo $v^2$ self-binding ($2\theta$ phase doubling) to extract principal antipodal axes with 50/50 sample balancing, requiring only a single 1-bit polarity anchor ($0.39\%$ label fraction) to spawn and ground a new fiber.
+    \item \textbf{Hysteresis Recycling and Non-Destructive Backpressure:} Each fiber tracks active section references (\texttt{ref\_count}) and consecutive idle ticks (\texttt{idle\_counter}). When all pool slots are occupied, non-destructive backpressure protects active fibers from overwriting; once a section remains idle for 6 ticks, it is pruned and unreferenced fibers are zero-reclaimed into the static pool for future reuse.
+\end{enumerate}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Summary of Backprop-Free $O(1)$-Memory Learning and 7-Season Perpetual Metabolism Benchmarks (256D Reversible Fiber Bundle).}
+\label{tab:metabolism_bench}
+\begin{tabularx}{\textwidth}{@{}Xccc@{}}
+\toprule
+\textbf{Benchmark / Metric} & \textbf{Configuration} & \textbf{Measured Result} & \textbf{0-Bit Reversibility} \\
+\midrule
+Deep Layer 17 Surgical ID & 64 layers (47 below output) & $|\Delta\rho| \le 3\text{ LSB}$, $|\Delta\theta| < 0.35^\circ$ & Exact ($\mu^{64}\circ\Delta^{64}=\mathrm{id}$) \\
+64-Layer Teacher--Student & All 64 layers from $w=\bot$ & $>95\%$ RMSE reduction (80 ep) & Exact (0-bit) \\
+Nonlinear 64-Layer XOR / Rings & 4-mode Wirtinger basis & $\ge 98.0\%$ test accuracy (256 pts) & Exact (0-bit) \\
+256D $\times$ 64L Multi-Thread Parity & 16,384 weights, $O(1)$ act. mem & Bit-exact \texttt{1T == 10T} & Exact (0-bit) \\
+7-Season Perpetual Metabolism & 3 fibers, 42 ticks ($5.20\text{ s}$) & \textbf{100.00\%} route/cls, \textbf{0 B} heap & \textbf{7,680/7,680} samples \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+In a 7-season continual benchmark (42 ticks, $5.20\text{ s}$ total runtime) over a fixed 3-fiber pool (\texttt{F0} protected 64-layer base; \texttt{F1}, \texttt{F2} 48-layer metabolic slots), the system executes 7 section prunings, 5 cascading fiber reclamations, 5 fiber slot reuses (dynamically relocating concept \texttt{U3} across \texttt{S1:F2 $\to$ S4:F1 $\to$ S7:F2}), and 1 full-pool backpressure protection event. Across all 7 seasons, routing and classification accuracy remain at $100.00\%$, dormant OOD rejection reaches $100.0\%$, dynamic memory growth is strictly \textbf{0~B} (physical fiber addresses remain invariant), base domains (\texttt{D0}, \texttt{U1}) exhibit \textbf{0.0\% catastrophic forgetting}, and all \textbf{7,680 processed samples} pass 0-bit exact inverse reconstruction.
+
+\section{Higher Simplices ($\Delta^2 / \Delta^3$) and Topological Self-Introspection}
+\label{sec:simplicial}
+
+\subsection{Inner Horn Filling ($\Lambda^2_k \hookrightarrow \Delta^2$) and $C_3$ Triality}
+In bipartite lifting ladders, input and output terminals play asymmetric roles, separating forward inference, backward abduction, and parameter learning into distinct procedural routines. Passing to the Poincar\'{e} dual of an oriented 2-simplex ($\Delta^2$) eliminates this structural asymmetry. Specifically, the three vertices of $\Delta^2$ host the three canonical dual-chart operators established in Section~\ref{sec:formulation}---$Z$ (Log-Polar FHRR binding), $X$ (orthogonal $\mathbb{Z}/2^{16}\mathbb{Z}$ bundling), and $H$ (dual-chart $\mathrm{Log} \leftrightarrow \mathrm{Cart}$ transition)---while the three bounding edges carry cyclic state streams $(r, g, b)$. Notably, this 3-valent operator topology maps directly onto the three existing connectivity references (\texttt{in\_s}, \texttt{in\_g}, \texttt{in\_v}) of the 64-byte \texttt{LiftingCellLog} structure without altering its memory footprint.
+
+Ordering the three vertex updates via 3-colored Gauss--Seidel sweeps ($r \to g \to b$ forward via $Z, X, H$, and $b \to g \to r$ backward via modular addition) produces a strictly 0-bit reversible 3-stream lifting ladder (\texttt{bench\_simplicial\_triality.c}). Across a 64-layer cascade evaluated on 512 state triples---including boundary singularities $(0,0)$ and $(-32768,-32768)$---all 512 states undergo full 3-axis mixing ($512/512$ scrambled) on the forward pass and recover their exact initial bits ($\mu^{64} \circ \Delta^{64} = \mathrm{id}$) on the reverse pass.
+
+At the algebraic level, a 2-simplex $\Delta^2$ with boundary operators $(f, g, h)$ enforces the closed-loop flatness condition $h \circ g \circ f \cong \mathrm{id}$, measured by the 2-morphism curvature $\omega_{\Delta^2} = \mathrm{curv}(h \circledast g \circledast f)$. A single curvature-flattening operator (\texttt{simplex2\_fill\_horn}) unifies three classical reasoning modes through $C_3$ cyclic symmetry by locking any two operators and relaxing the remaining open horn slot ($\Lambda^2_k \hookrightarrow \Delta^2$):
+\begin{enumerate}
+    \item \textbf{Forward Deduction ($\Lambda^2_2$: $f, g$ locked $\to h$ inferred):} Computes the composite morphism $h = (g \circ f)^\dagger$ closing the commutative triangle.
+    \item \textbf{Causal Abduction ($\Lambda^2_0$: $g, h$ locked $\to f$ inferred):} Infers the missing premise $f = (h \circ g)^\dagger$ required to explain an observed consequence.
+    \item \textbf{Transformation Learning ($\Lambda^2_1$: $f, h$ locked $\to g$ inferred):} Identifies the unknown intermediate transition or gauge compensator $g = h^\dagger \circ f^\dagger$.
+\end{enumerate}
+Initialized from corrupted or antipodally inverted guesses, all three horn-filling modes converge within $\le 24$ steps to the exact 0-bit ground-truth operator and restore closed-loop state transport $h(g(f(s_0))) = s_0$ without error. Furthermore, reversing simplex orientation ($\mathrm{orient} = \pm 1$) negates curvature signs identically, while a M\"{o}bius $\pi$-twist ($\texttt{0x8000} \equiv -\texttt{0x8000} \pmod{2^{16}}$) exhibits exact $\mathbb{Z}_2$ self-duality.
+
+\subsection{$\Delta \leftrightarrow \mathrm{Y}$ Rewriting and Simplicial Hodge Repair on $S^2$ and $T^2$}
+When triangles are glued into 2D simplicial meshes, discrete exterior calculus partitions circuit defects into orthogonal cohomological sectors. First, at the single-cell level, a flat triangle ($\omega_{\Delta^2} = 0$) admits an exact 0-bit Star--Triangle contraction ($\Delta \to \mathrm{Y}$) onto a central hub with three radial legs, compressing degrees of freedom from 3 to 2 while matching all six directed pairwise transports across $100/100$ random circuits. Conversely, when a non-trivial $H^1$ obstruction ($\omega_{\Delta^2} \neq 0$, such as M\"{o}bius $\pi = \texttt{0x8000}$, quarter-turn $\pi/2 = \texttt{0x4000}$, or complex logarithmic twist $(-256, \texttt{0x2B73})$) is present, a static $\mathrm{Y}$ hub retains an irreducible invariant residual equal to $\omega_{\Delta^2}$, triggering autonomous $\mathrm{Y} \to \Delta$ splitting that converges to 0-bit edge flatness within $\le 24$ steps.
+
+Extending this mechanism to closed orientable 2D meshes (\texttt{bench\_simplicial\_mesh\_h1\_h2.c})---specifically a regular icosahedron $S^2$ ($V=12, E=30, F=20, \chi=2$) and a $4 \times 4$ torus $T^2$ ($V=16, E=48, F=32, \chi=0, b_1=2, b_2=1$)---yields an exact discrete Hodge decomposition of 1-form edge connections $w \in C^1(M)$:
+\begin{equation}
+    C^1(M) = \underbrace{\mathrm{im}(\delta^0)}_{\text{0-form vertex gauge}} \;\oplus\; \underbrace{\ker(\Delta_1)}_{\text{harmonic } H^1 \text{ windings}} \;\oplus\; \underbrace{\mathrm{im}(\delta_1^*)}_{\text{local } H^1 \text{ vortices}}.
+\end{equation}
+Across $S^2$, arbitrary 0-form vertex gauge transformations leave all 20 triangular face curvatures invariant to 0 bits, and the global face sum $\Omega_{H^2} = \sum_{f} \omega_f$ vanishes identically (Stokes' theorem) even when local edge defects excite adjacent $H^1$ vortex dipoles. By contrast, injecting an external 2-form flux produces a topologically protected $H^2$ monopole ($\Omega_{H^2} = (-384, \texttt{0x4000})$) that remains invariant across 200 arbitrary edge rewrites. On the genus-1 torus $T^2$, simultaneously injecting a global $H^2$ monopole $(-256, \texttt{0x4000})$, a local $H^1$ edge defect $(+192, \texttt{0x3400})$, and non-trivial harmonic $H^1$ cycle windings ($W(\gamma_x) = \texttt{0x8000}, W(\gamma_y) = \texttt{0x2B74}$) is resolved autonomously without prior knowledge of defect locations: the auditor first extracts $\Omega_{H^2}$ into bulk 3-morphism compensators $\Gamma_{H^2}$, flattens all 32 faces to $(0,0)$ via discrete Hodge edge relaxation, and captures the remaining non-contractible cycle holonomies in \texttt{TwistedSection} boundary operators so all 8 fundamental cycles evaluate to $(0,0)$.
+
+\subsection{3D Tetrahedral Meshes ($S^3$), Blind Self-Identification, and Pachner Self-Repair}
+Gluing four triangular faces along six shared edges forms a 3-simplex (tetrahedron $\Delta^3$). Across $1,000/1,000$ randomized non-saturated tetrahedra whose individual faces carry non-zero $H^1$ curvature, the alternating boundary sum $\Omega_{H^2} = \omega_{123} - \omega_{023} + \omega_{013} - \omega_{012}$ vanishes identically ($\delta^2 \circ \delta^1 = 0$, the discrete Bianchi identity). Contextual contradictions across faces---or Associator breakdown triggered when edge bindings hit the logarithmic saturation ceiling $\rho = \pm 32767$ ($\Omega_{H^2} = (-15233, 0)$)---manifest as edge-gauge-invariant $H^2$ monopoles that are neutralized 0-bit by a bulk 3-morphism cell $\Gamma_{\Delta^3}$.
+
+In 3D tetrahedral meshes discretizing the 3-sphere $S^3$ (initialized either as the minimal boundary $\partial\Delta^4$ with $V=5, E=10, F=10, T=5, \chi=0$ or the 16-cell boundary with $V=8, E=24, F=32, T=16, \chi=0$, housed inside a static $79.3\text{ KB}$ zero-heap structure \texttt{lc\_pachner3\_mesh\_t}), local topology is dynamically reshaped through the four ergodic 3D Pachner bistellar moves:
+\begin{itemize}
+    \item \textbf{1-4 Subdivision and 4-1 Contraction ($\Delta V = \pm 1, \Delta E = \pm 4, \Delta F = \pm 6, \Delta T = \pm 3, \Delta\chi = 0$):} Inserts or collapses an interior vertex inside a tetrahedron to allocate or reclaim bulk 3-morphism resolution.
+    \item \textbf{2-3 and 3-2 Bistellar Flips ($\Delta V = 0, \Delta E = \pm 1, \Delta F = \pm 2, \Delta T = \pm 1, \Delta\chi = 0$):} Replaces two tetrahedra sharing a triangular face with three tetrahedra sharing a central edge (and vice versa). Geometrically, the 2-3 / 3-2 equivalence realizes the \textbf{Mac Lane Pentagon Identity} for monoidal associators---verified to 0-bit exactness across $1,000/1,000$ algebraic pentagon diagrams and across 100 consecutive randomized Pachner moves ($23 \times \text{1-4}$, $11 \times \text{4-1}$, $47 \times \text{2-3}$, $19 \times \text{3-2}$) preserving $\chi = 0$, global $H^3$ holonomy $\Omega_{H^3} = (-384, \texttt{0x4000})$, and 0-bit 4-stream (R-G-B-W) reversibility across all 69 surviving tetrahedra ($4.85\text{ ms}$).
+\end{itemize}
+
+Finally, combining active probing with 3D Pachner moves enables a circuit to perform \textbf{blind topological self-identification and closed-loop self-repair} (\texttt{bench\_self\_introspection\_3d\_full\_id.c}) without inspecting the internal memory of a Device Under Test (DUT) containing hidden two-stage series elements and mixed symmetry fibers:
+\begin{enumerate}
+    \item \textbf{Blind Bootstrap Identification (Tick 0):} First, strong probes driving internal edges into saturation ($\rho = \pm 32767$) or $\bot$ break series associativity, recovering all composite edge weights $W_e$ to 0 bits ($30/30$ on $S^2$; $24/24$ on $S^3$) and uniquely separating opposite-sign series pairs $(\rho_1, \rho_2)$ ($20/20$ on $S^2$). Second, minimal lattice window probing ($Z_4$) and second-harmonic interference ($Z_1$) break cyclic phase symmetries ($U(1) \to C_4 \to \{e\}$), calibrating full-circle $\{e\}$ edges within $\le 0.214^\circ$ and $C_4$ ($\bmod\, 90^\circ$) edges within $\le 0.461^\circ$ to achieve 0-bit face curvature parity ($\Delta\omega_f = (0,0)$) between the internal \texttt{Self-Model} and the opaque DUT.
+    \item \textbf{5-Tier Closed-Loop Self-Introspection (Ticks 1--15):} Driven solely by 2-morphism discrepancies between DUT observations and \texttt{Self-Model} predictions, the system autonomously executes: \textbf{Tier-0} flat maintenance; \textbf{Tier-1} $H^1$ edge synchronization from face residuals $\Delta\omega_f$; \textbf{Tier-2F / Tier-2P} 2-2 diagonal flips ($S^2$, reducing peak $L^1$ curvature by $-75.0\%$) and 2-3 pentagon dispersion ($S^3$, distributing $H^3$ load across three tetrahedra while conserving $\Omega_{H^2}/\Omega_{H^3}$ to 0 bits); \textbf{Tier-2A} 1-3 or 1-4 adaptive subdivision for extreme monopoles; and \textbf{Tier-2B / Tier-3} hysteresis metabolic contraction (3-1 on $S^2$; 4-1 and 3-2 on $S^3$) once a subdivided region remains flat for $\ge 4$ idle ticks, recycling all $(V, E, F, T)$ slots with 0~B dynamic allocation and preserving 0-bit R-G-B / R-G-B-W parity across 256 test states.
+\end{enumerate}
+
+\subsection{The Self-Organized Network as a Verifiable Bidirectional AST}
+Because every primitive in the \texttt{Self-Model} obeys strict 0-bit conservation, the self-organized simplicial topology is not merely an opaque statistical approximation requiring post-hoc interpretation; it functions directly as a hardware-executable, \textbf{bidirectional Abstract Syntax Tree (AST)} (equivalently, a string diagram in a dagger compact closed higher category):
+\begin{itemize}
+    \item \textbf{Intrinsic Type Soundness:} Vertical composition ($\circ$) and horizontal tensor coupling ($\otimes$) define the syntactic tree structure, while 0-bit modular conservation laws enforce static type invariants physically at every node.
+    \item \textbf{Normalization as Cut Elimination:} Topological contractions ($\Delta \to \mathrm{Y}$ and hysteresis 3-1 / 4-1 / 3-2 Pachner reductions) eliminate redundant intermediate lemmas while preserving external input--output semantics, acting as a physical realization of Gentzen cut-elimination.
+    \item \textbf{Hallucination-Free Proof Traces and Explicit Holes:} Because every forward transformation $\Delta$ possesses an exact inverse $\mu$, unwinding the \texttt{Self-Model} and its sequence of 3-morphism Pachner rewrites yields a complete, verifiable causal derivation from conclusion back to premises. Conversely, any irreducible $H^1$ vortex or $H^2$ monopole pinpoint-localizes unresolved logical contradictions (analogous to typed holes or \texttt{sorry} obligations in formal proof assistants) rather than fabricating plausible but inconsistent explanations.
+\end{itemize}
+
+\section{Comprehensive Experimental Evaluation}
+\label{sec:evaluation}
+
+All benchmark suites are implemented in strict C99 (\texttt{-std=c99 -O3 -Wall -Wextra}) atop the single header \texttt{lifting\_core\_v2.h} with zero dynamic heap allocation (\texttt{malloc}-free), zero floating-point math library linkage (\texttt{-lm}-free), and deterministic bit-identical parity between scalar C99 and ARM64 NEON SIMD backends. Table~\ref{tab:master_eval} consolidates the quantitative results across all four architectural layers evaluated on Apple Silicon (ARM64, 10 logical cores).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Consolidated Experimental Evaluation Across All Four Layers of the Monoidal Lifting Triangle Architecture (\texttt{lifting\_core\_v2.h}, Zero Heap, \texttt{-lm}-Free).}
+\label{tab:master_eval}
+\begin{tabularx}{\textwidth}{@{}lXcc@{}}
+\toprule
+\textbf{Layer / Benchmark Suite} & \textbf{Problem Scale / Topology} & \textbf{Key Quantitative Metric} & \textbf{Conservation / Parity} \\
+\midrule
+\textbf{L1: Dual-Chart LUT Round-Trip} & 7.5~KB L1D LUT ($\mathrm{Cart} \leftrightarrow \mathrm{Log}$) & Max err $\le 1\text{ LSB} / 0.220^\circ$ & 0-bit scalar--NEON parity \\
+\textbf{L1: 64-Layer Closed Ladder} & $\mu^{64} \circ \Delta^{64}$ (64B cells, NEON) & \textbf{2.54--2.75 G cells/s} & \textbf{0-bit exact} ($\mathrm{id}$) \\
+\textbf{L1: 3-Shear Arbitrary Rotation} & All $\theta \in \mathbb{Z}/2^{16}\mathbb{Z}$ (incl. $105^\circ$) & Exact 3-pass $Q1.14$ lifting & \textbf{0-bit exact} inverse \\
+\midrule
+\textbf{L2: Curried ANF Synthesis} & CNOT, XOR, OR, Full Adder, Toffoli3 & $0, 3, 2$ spawned cells (min ANF) & \textbf{0-bit} $L^2$ residual \\
+\textbf{L2: 64-Bit Adder Abduction} & $2^{127}$ states, 127 unknowns & \textbf{127 steps} ($O(N)$, 0 backtrack) & \textbf{0-bit} input recovery \\
+\textbf{L2: 10-Bit Semiprime Factoring} & Curried multiplier DAG + 1-UIP & $-50\%$ to $-90\%$ conflicts & \textbf{0-bit} exact factors \\
+\textbf{L2: $9 \times 9$ Sudoku (Inkala 2012)} & Zero-heap 1-UIP + \texttt{bond\_deg} & Full grid solved, 0~B heap & \textbf{0-bit} constraint fit \\
+\textbf{L2: Soft-Decision QC-LDPC} & LiftingCell phase belief propagation & BER $= 0.00000$; $34.9\%$ BEC fixed & \textbf{0-bit} codeword match \\
+\midrule
+\textbf{L3: 256D $\times$ 64L Local Learning} & 16,384 weights, $O(1)$ act. memory & 1,908.7 M cell-layers/s (10T) & \textbf{0-bit} \texttt{1T == 10T} \\
+\textbf{L3: Nonlinear 64L XOR / Rings} & 4-mode Wirtinger harmonic ladder & \textbf{100.0\%} (256D) / $\ge 98.0\%$ (1D) & \textbf{0-bit} 64L reversible \\
+\textbf{L3: Continual 3-Morphism Growth} & 4 tasks (M\"{o}bius $\pi$, $105^\circ$, ortho XOR) & \textbf{100.0\%} acc, \textbf{+0.0\%} forgetting & \textbf{0-bit} up to 96 layers \\
+\textbf{L3: 7-Season Pool Metabolism} & 3 fibers, 42 ticks, 7,680 samples & \textbf{100.00\%} route/cls, \textbf{0~B} heap & \textbf{7,680/7,680} 0-bit inv. \\
+\midrule
+\textbf{L4: $\Delta^2$ 3-Stream \& Horn Filling} & 64L R-G-B; $\Lambda^2_k \hookrightarrow \Delta^2$ ($k \in \{0,1,2\}$) & $512/512$ rev.; $\le 24$-step fill & \textbf{0-bit} exact closure \\
+\textbf{L4: $S^2$ \& $T^2$ Hodge Audit} & $V=12..16, E=30..48, F=20..32$ & $H^2 + \text{local } H^1 + \text{harm. } H^1$ fixed & \textbf{0-bit} $\Omega_{H^2}$ \& cycles \\
+\textbf{L4: 3D $S^3$ Pachner \& Pentagon} & $79.3\text{ KB}$ pool, 100 random moves & $1,000/1,000$ pentagon; $4.85\text{ ms}$ & \textbf{0-bit} $\chi=0$ \& R-G-B-W \\
+\textbf{L4: Blind ID \& 5-Tier Loop} & 2-stage hidden DUT ($S^2$ \& $S^3$) & $30/30$ \& $24/24$ blind $W_e$ ID & \textbf{0-bit} DUT parity \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Discussion, Limitations, and Future Directions}
+\label{sec:discussion}
+
+\subsection{Direct $O(N)$ Compilation to Dependent Type Theory (Lean 4 / Coq)}
+A direct consequence of the isomorphism between our self-organized circuit topology and a bidirectional AST is that formal verification assistants such as Lean~4 or Coq need not be invoked as computationally expensive search solvers. Instead, each elementary MLT operation---identity, Log-Polar phase binding, 3-shear rotation, bipartite lifting step, and simplicial horn closure---maps 1-to-1 onto a dependent record bundling forward and inverse maps alongside algebraic conservation proofs (\texttt{left\_inv}, \texttt{right\_inv}, and \texttt{conserves}).
+
+Because local conservation is preserved inductively under vertical composition ($\circ$), horizontal tensoring ($\otimes$), and Pachner boundary moves, a self-organized circuit of $N$ cells compiles in $O(N)$ linear time into a constructive Lean~4 proof term. In this division of labor, the physical MLT network performs parallel variational relaxation and $O(N)$ causal abduction, while the external theorem prover acts purely as an $O(N)$ type-checking kernel certifying soundness.
+
+\subsection{Gauge Equivalence and Fundamental Observability Boundaries}
+Our cohomological analysis also clarifies the fundamental limits of blind self-identification. By the discrete Hodge decomposition, 0-form vertex gauge transformations ($\mathrm{im}(\delta^0)$) leave all face curvatures and global holonomies identically invariant; similarly, within a fixed homeomorphism class, meshes related by finite sequences of 1-3/3-1 or 1-4/4-1/2-3/3-2 Pachner moves share identical global topological invariants ($\chi$, Betti numbers, and $\Omega_{H^2}/\Omega_{H^3}$).
+
+Pinning individual internal coordinates within such gauge orbits requires either structural sparsity priors (such as minimum-$L^0$ defect localization) or strong boundary probes that deliberately excite saturation ($\rho = \pm 32767$) and $\bot$ singularities to break associativity. Crucially, however, this unobservable gauge subspace $\ker(\mathcal{O})$ is a feature rather than a flaw: it defines the exact invariant manifold within which a self-modifying network can rebalance curvature load (via 2-2 or 2-3 flips) and reclaim memory slots (via 3-1 or 4-1 contractions) without altering its external input--output specification by a single bit.
+
+\subsection{Limitations and Future Work}
+Several open challenges remain for scaling this architecture toward full-scale embodied general intelligence:
+\begin{enumerate}
+    \item \textbf{High-Dimensional Simplicial Mesh Scaling:} While our 1D/2D fiber bundles scale cleanly to 256 dimensions across 64 layers ($16,384$ weights) and our 3D simplicial engine runs inside a $79.3\text{ KB}$ static pool, extending adaptive 3D/4D Pachner meshes to millions of coupled spatio-temporal cells will require hierarchical multi-grid block scheduling and distributed boundary synchronization.
+    \item \textbf{Coupled Continuous PDEs and Symbolic Planning:} Because the same 64-byte primitive handles smooth logarithmic wave propagation and discrete $\mathbb{F}_2$ ANF logic, a natural next step is coupling continuous physical simulation (e.g., wave and fluid conservation laws on simplicial meshes) directly with discrete symbolic task planning inside a single unified mesh.
+    \item \textbf{Dedicated Silicon and Neuromorphic Realization:} With a fixed 64-byte cache-aligned cell layout, 7.5~KB of read-only lookup tables, zero floating-point units, and purely local neighbor communication, the MLT primitive is directly suited for custom FPGA overlays and ultra-low-power asynchronous neuromorphic ASICs approaching reversible Landauer-limit computing.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{sweldens1998}
+W.~Sweldens, ``The lifting scheme: A construction of second generation wavelets,'' \emph{SIAM Journal on Mathematical Analysis}, vol.~29, no.~2, pp.~511--546, 1998.
+
+\bibitem{plate2003}
+T.~A.~Plate, \emph{Holographic Reduced Representations: Distributed Representation for Cognitive Structures}. Stanford, CA: CSLI Publications, 2003.
+
+\bibitem{coecke2011}
+B.~Coecke and R.~Duncan, ``Interacting quantum observables: Categorical algebra and diagrammatics,'' \emph{New Journal of Physics}, vol.~13, no.~4, 043016, 2011.
+
+\bibitem{maclane1971}
+S.~Mac~Lane, \emph{Categories for the Working Mathematician}. New York, NY: Springer-Verlag, 1971.
+
+\bibitem{lurie2009}
+J.~Lurie, \emph{Higher Topos Theory}. Princeton, NJ: Princeton University Press, 2009.
+
+\bibitem{pachner1991}
+U.~Pachner, ``P.L. homeomorphic manifolds are equivalent by elementary shellings,'' \emph{European Journal of Combinatorics}, vol.~12, no.~2, pp.~129--145, 1991.
+
+\bibitem{gentzen1935}
+G.~Gentzen, ``Untersuchungen \"{u}ber das logische Schlie{\ss}en. I,'' \emph{Mathematische Zeitschrift}, vol.~39, no.~1, pp.~176--210, 1935.
+
+\end{thebibliography}
+
+\end{document}

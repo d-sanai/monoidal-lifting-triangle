@@ -1,0 +1,12 @@
+build/
+*.dylib
+*.so
+*.o
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+__pycache__/
+.DS_Store
