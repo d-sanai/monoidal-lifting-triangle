@@ -104,7 +104,7 @@ If you use this codebase or theoretical framework in your research, please cite:
   author       = {The Monoidal Lifting Triangles Team},
   year         = {2026},
   howpublished = {Zenodo / GitHub},
-  doi          = {10.5281/zenodo.XXXXXXX},
+  doi          = {10.5281/zenodo.24514826},
   url          = {[https://github.com/](https://github.com/)d-sanai/monoidal-lifting-triangle}
 }
 ```
