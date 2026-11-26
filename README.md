@@ -2,7 +2,7 @@
 
 **Exact Bit-Lossless Neural-Symbolic Computing and Topological Self-Introspection in a 64-Byte Cell**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Standard: C99](https://img.shields.io/badge/Standard-C99-brightgreen.svg)]()
 [![Dependencies: None](https://img.shields.io/badge/Dependencies-Zero%20Heap%20%7C%20No%20libm-orange.svg)]()
 
@@ -113,4 +113,6 @@ If you use this codebase or theoretical framework in your research, please cite:
 
 ## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+Copyright 2026 d-sanai
+
+This project is licensed under the **Apache License, Version 2.0** — see the [LICENSE](LICENSE) file for details.
